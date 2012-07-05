@@ -6,27 +6,8 @@
 <link rel="stylesheet" href="./newfi.css" />
 <!-- 
 
-TODO:
-fix the brokenness when you leavupify it
-gitification
-shorter timestamps
-use divs instead of tables for better mobile layoutification
-fistory limit
-
-/me 
-/topic
-online/away/etc status
-(decay update if not visible eh? esp. on mobile)
-n8v> we need to use git or svn or something so we can both work on it
-linkification (markdown?)
-gravatars!!!!!!!!!!!!!!!!!!!!!!!!!! in the notificator! See github issue!
-And the nicks! Or colorfy them!
-
-new item counter in <title>
-
 -->
-</head>
-<body onload="runme()">
+
 <script type="text/javascript">
 
 
@@ -234,7 +215,8 @@ function say() {
 
   myname = nick;
 
-  var txt = encodeURIComponent(nick + "> " + say);
+  var txt = encodeURIComponent(nick + "&gt; " + say);
+
 //               encodeURIComponent(say);
 
   var xmlhttp = getXMLRequest();
@@ -283,6 +265,9 @@ function say() {
 }
 
 </script>
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+</head>
+<body onload="runme()">
 <table id=pop></table>
 <hr>
 <pre id=pre></pre>
