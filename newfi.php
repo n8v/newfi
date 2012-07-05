@@ -70,7 +70,7 @@ if (isset($_REQUEST['g'])) {
 		//      $except = NULL;
 		fseek($file,$get,0);
 		//      stream_select($read,$write,$except,1);
-		$data = fread($file,1000);
+		$data = fread($file,1000000);
 		$newsize = ftell($file);
 		if ($newsize == $get) usleep(100000);
 		$tries++;
