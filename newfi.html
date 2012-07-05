@@ -85,34 +85,40 @@ function check_notificatable() {
 function add_line(txt)
 {
 
-     
-      var tbl = document.getElementById('pop');
-      var row = tbl.insertRow(tbl.rows.length);
-//      var t = document.createTextNode(txt);
+    
+    var tbl = document.getElementById('pop');
+    var row = tbl.insertRow(tbl.rows.length);
+    //      var t = document.createTextNode(txt);
 
-      if (typeof(txt) === "string") {
-        var b = txt.split(': ',2);
+    var timestamp = '';
+
+    if (typeof(txt) === "string") {
+        var b = txt.split(': ');
         if (b && b.length > 1) {
-          var a = b[1].split('> ',2);
+	    timestamp = b.shift();
+	    
+            var a = b.join(': ').split('> ');
         } else {
-          var a = txt.split('> ',2);
+            var a = txt.split('> ');
         }
-      }
+    }
+    var nick = a.shift();
+    var saying = a.join('> ');
 
-      var nickclass = a[0] == myname ? 'myself' : '';
+    var nickclass = nick == myname ? 'myself' : '';
 
-      var t = document.createElement('div');     
-      t.innerHTML = b[0] + ': <span class="nick '+ nickclass +'">' + 
-      a[0] + '&gt; </span>' +
-      '<span class="blah">' + a[1] + '</span>';
+    var t = document.createElement('div');     
+    t.innerHTML = timestamp + ': <span class="nick '+ nickclass +'">' + 
+	nick + '&gt; </span>' +
+	'<span class="blah">' + saying + '</span>';
 
-      if (a[0] != myname && a[1] && a[1].length && a[1].indexOf(myname) > -1) {
-        notificator(a[0], a[1]);
-      }
-      
-      var it = row.insertCell(0);
-      
-      it.appendChild(t);
+    if (nick != myname && saying && saying.length && saying.indexOf(myname) > -1) {
+        notificator(nick, saying);
+    }
+    
+    var it = row.insertCell(0);
+    
+    it.appendChild(t);
 
 
 }
@@ -215,6 +221,7 @@ function say() {
 
   myname = nick;
 
+    // emacs syntax is sad :<
   var txt = encodeURIComponent(nick + "> " + say);
 
 //               encodeURIComponent(say);
