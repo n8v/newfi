@@ -12,7 +12,7 @@ if (isset($_REQUEST['s'])) {
    $timeday = array();
    $timeday = gettimeofday();
 
-   $say = strftime("%Y-%m-%d %H:%M:%S") . "." . $timeday["usec"] . ": " . $_REQUEST['s'] . "\r\n";
+   $say = strftime("%m-%d %H:%M") . ": " . $_REQUEST['s'] . "\r\n";
 
    $file = false;
    do {
