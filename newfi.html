@@ -84,10 +84,8 @@ function check_notificatable() {
 
 function add_line(txt)
 {
-
-    
     var tbl = document.getElementById('pop');
-    var row = tbl.insertRow(tbl.rows.length);
+
     //      var t = document.createTextNode(txt);
 
     var timestamp = '';
@@ -108,7 +106,9 @@ function add_line(txt)
     var nickclass = nick == myname ? 'myself' : '';
 
     var t = document.createElement('div');     
-    t.innerHTML = timestamp + ': <span class="nick '+ nickclass +'">' + 
+    t.className = 'saying';
+    t.innerHTML = '<span class="ts">' + timestamp + 
+	': </span><span class="nick '+ nickclass +'">' + 
 	nick + '&gt; </span>' +
 	'<span class="blah">' + saying + '</span>';
 
@@ -116,9 +116,9 @@ function add_line(txt)
         notificator(nick, saying);
     }
     
-    var it = row.insertCell(0);
+//    var it = row.insertCell(0);
     
-    it.appendChild(t);
+    tbl.appendChild(t);
 
 
 }
@@ -145,7 +145,7 @@ function update() {
 	
 
       var ret = xmlhttp.responseText;
-  setTimeout(update, 1000);
+	setTimeout(update, 1000);
 
       var semi = ret.indexOf(';');
       if (semi > 0) {
@@ -275,7 +275,7 @@ function say() {
 <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 </head>
 <body onload="runme()">
-<table id=pop></table>
+<div id=pop></div>
 <hr>
 <pre id=pre></pre>
 <div style="width:100%">
