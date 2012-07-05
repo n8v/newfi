@@ -1,0 +1,20 @@
+body, td, input {
+  font-family: Consolas, Lucida Console, monospace;
+  font-size: 8pt;
+  color: #ccc;
+  background-color: black;
+}
+
+span.myself {
+  color: #666;
+}
+
+
+@media all and (max-width: 640px) {
+    #say { width: 400px }
+}
+
+@media all and (max-width: 320px) {
+    #say { width: 80% }
+}
+

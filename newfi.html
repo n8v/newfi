@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>newfi</title>
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="./newfi.css" />
+<!-- 
+
+TODO:
+fix the brokenness when you leavupify it
+gitification
+shorter timestamps
+use divs instead of tables for better mobile layoutification
+fistory limit
+
+/me 
+/topic
+online/away/etc status
+(decay update if not visible eh? esp. on mobile)
+n8v> we need to use git or svn or something so we can both work on it
+linkification (markdown?)
+gravatars!!!!!!!!!!!!!!!!!!!!!!!!!! in the notificator! 
+And the nicks! Or colorfy them!
+
+new item counter in <title>
+
+-->
+</head>
+<body onload="runme()">
+<script type="text/javascript">
+
+
+var last = 0;
+var myname = 'noob';
+var global_notificatable = false;
+
+// Let's write our own jQuery!
+function getXMLRequest() {
+
+var xmlhttp=false;
+/*@cc_on @*/
+/*@if (@_jscript_version >= 5)
+// JScript gives us Conditional compilation, we can cope with old IE versions.
+// and security blocked creation of the objects.
+  try {
+    xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+  } catch (e) {
+    try {
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    } catch (E) {
+       xmlhttp = false;
+    }
+  }
+  @end @*/
+  if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+    try {
+      xmlhttp = new XMLHttpRequest();
+    } catch (e) {
+      xmlhttp=false;
+    }
+  }
+  if (!xmlhttp && window.createRequest) {
+    try {
+      xmlhttp = window.createRequest();
+    } catch (e) {
+      xmlhttp=false;
+    }
+  }
+  return xmlhttp;
+}
+
+
+// http://www.html5rocks.com/en/tutorials/notifications/quick/
+function notificator(who, blah) {
+    if (global_notificatable) {
+      console.log("notifigying " + myname + " that " + who + " said " + blah);
+      var lastNotice =  window.webkitNotifications.createNotification(
+               null, who +' mentioned you in fi', blah).show();
+    }
+}
+
+function check_notificatable() {
+  if (global_notificatable) {
+    return true;
+  }
+  if (window.webkitNotifications) {
+    console.log("Notifications are supported!");
+    if (window.webkitNotifications.checkPermission() == 0) { // 0 is PERMISSION_ALLOWED
+      return global_notificatable = true;
+    } else {
+      console.log("Requesting Notification Permission");
+      window.webkitNotifications.requestPermission();
+//      return check_notificatable();
+    }
+  }
+  else {
+ //   console.log("Notifications are not supported for this Browser/OS version yet.");
+    return global_notificatable = false;
+  }
+}
+
+
+
+function add_line(txt)
+{
+
+     
+      var tbl = document.getElementById('pop');
+      var row = tbl.insertRow(tbl.rows.length);
+//      var t = document.createTextNode(txt);
+
+      if (typeof(txt) === "string") {
+        var b = txt.split(': ',2);
+        if (b && b.length > 1) {
+          var a = b[1].split('> ',2);
+        } else {
+          var a = txt.split('> ',2);
+        }
+      }
+
+      var nickclass = a[0] == myname ? 'myself' : '';
+
+      var t = document.createElement('div');     
+      t.innerHTML = b[0] + ': <span class="nick '+ nickclass +'">' + 
+      a[0] + '&gt; </span>' +
+      '<span class="blah">' + a[1] + '</span>';
+
+      if (a[0] != myname && a[1] && a[1].length && a[1].indexOf(myname) > -1) {
+        notificator(a[0], a[1]);
+      }
+      
+      var it = row.insertCell(0);
+      
+      it.appendChild(t);
+
+
+}
+
+function update() {
+  var xmlhttp = getXMLRequest();
+  if (!xmlhttp) {
+    setTimeout(update, 1000);
+    return;
+  }
+
+  xmlhttp.open("GET","/newfi.php?g=" + last,true);
+  xmlhttp.onerror = function() {
+        setTimeout(update, 1000);
+        return false;
+  }
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4) {
+      if (xmlhttp.status!=200) {
+        change_name("FAIL!");
+        setTimeout(update, 1000);
+        return false;
+      }
+	
+
+      var ret = xmlhttp.responseText;
+  setTimeout(update, 1000);
+
+      var semi = ret.indexOf(';');
+      if (semi > 0) {
+         last = 1 * ret.substring(0,semi);
+	 var saystr = ret.substring(semi + 1); 
+	 var sayings = new Array();
+	 sayings = saystr.split('\n');
+
+	 var need_scroll = false;
+	 for ( var i in sayings) {
+//alert(sayings[i]);
+
+	   if (sayings[i].length > 0) {
+	     add_line(sayings[i]);
+	     need_scroll = true;
+	   }
+         }
+
+	 if (need_scroll) {
+           // scroll to bottom
+           window.scrollTo(0, document.body.scrollHeight);
+	 }
+
+      }
+    }
+  }
+  xmlhttp.setRequestHeader('Accept','text/html');
+  xmlhttp.send(null);
+}
+
+
+function runme() {
+  var cookies = document.cookie.split(';');
+  var nick = myname;
+
+  for(var i=0; i < cookies.length; i++) {
+    var c = cookies[i];
+    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    if (c.indexOf('nick=') == 0) nick = c.substring(5,c.length);
+  }
+  
+  document.getElementById('nick').value = nick;
+  myname = nick;
+
+  update();
+
+}
+
+
+function go(e) {
+  valid=0;
+  check_notificatable();
+  if (e && e.which) {
+    e = e;
+    if (e.which != 13) return;
+  } else {
+    e = event;
+    if (e.keyCode != 13) return;
+  }
+
+  say();
+}
+
+
+function say() {
+  var say = document.getElementById('say').value;
+  if (! say) {return false;}
+
+  var nick = document.getElementById('nick').value;
+  document.cookie = "nick=" + nick + "; expires= Tue Jan 19, 2038 03:14:07 UTC; path=/";
+
+  var spanclass = nick == myname ? 'myself' : '';
+
+  myname = nick;
+
+  var txt = encodeURIComponent(nick + "> " + say);
+//               encodeURIComponent(say);
+
+  var xmlhttp = getXMLRequest();
+  if (!xmlhttp) {
+    return;
+  }
+
+  xmlhttp.open("GET","/newfi.php?s=" + txt + "&g" + last,true);
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4) {
+      if (xmlhttp.status!=200) {
+        change_name("FAIL!");
+        return false;
+      }
+	
+
+      var ret = xmlhttp.responseText;
+
+      var semi = ret.indexOf(';');
+      if (semi > 0) {
+         last = 1 * ret.substring(0,semi);
+	 var saystr = ret.substring(semi + 1); 
+	 var sayings = new Array();
+	 sayings = saystr.split('\n');
+
+	 for ( var i in sayings) {
+	   if (sayings[i].length > 0) add_line(sayings[i]);
+         }
+
+	 // scroll to bottom
+	 window.scrollTo(0, document.body.scrollHeight);
+
+
+      }
+    }
+  }
+  xmlhttp.setRequestHeader('Accept','text/html');
+  xmlhttp.send(null);
+
+  
+  document.getElementById('say').value = '';
+  document.getElementById('say').focus();
+
+  return;
+
+}
+
+</script>
+<table id=pop></table>
+<hr>
+<pre id=pre></pre>
+<div style="width:100%">
+<input type=text id=nick value="noob" onkeypress="go(event)" onblur="" >
+
+<input type=text id=say size=100 onkeypress="go(event)" onblur="say()" >
+<input type=submit onclick="go(0); return false;">
+</div>
+</body>
