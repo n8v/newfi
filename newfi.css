@@ -5,6 +5,13 @@ body, td, input {
   background-color: black;
 }
 
+/* a {background-color: #000;} */
+a:link {color:#aaf;} /* unvisited link */
+a:visited {color:#faf;} /* visited link */
+a:hover {color:#ffa;} /* mouse over link */
+a:active {color:#faa;} /* selected link */
+
+
 span.myself {
   color: #666;
 }
