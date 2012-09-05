@@ -26,7 +26,8 @@ if (isset($_REQUEST['s'])) {
    if ($file) {
        if (flock($file, LOCK_EX)) {
 	   fwrite($file,$say,strlen($say));
-	   fclose($file);
+	   flock($file, LOCK_UN);
+	   fclose($file);	   
        }
        else {
 	       die( "COULD NOT FLOCK $datafile");
@@ -53,7 +54,7 @@ function pretty($string)
     return implode('',$newstring);
 }
 
-$maxtries = 9;
+$maxtries = 900; // about 90 seconds
 $tries = 0;
 
 if (isset($_REQUEST['g'])) {
@@ -62,28 +63,30 @@ if (isset($_REQUEST['g'])) {
     $file = fopen($datafile,"r");
     if ($file) {
 	
-	if (flock($file, LOCK_SH)) {
-
-	    do {
+      do {
 		//      $read = array($file);
 		//      $write = NULL;
 		//      $except = NULL;
+	if (flock($file, LOCK_SH)) {
+
+
 		fseek($file,$get,0);
 		//      stream_select($read,$write,$except,1);
 		$data = fread($file,1000000);
 		$newsize = ftell($file);
-		if ($newsize == $get) usleep(100000);
-		$tries++;
-	    } while($newsize == $get && $tries <= $maxtries);
+		flock($file, LOCK_UN);
+        }
+	else {
+	    die("COULD NOT aquire shared lock.");
+	}
+	if ($newsize == $get) usleep(100000);
+	$tries++;
+      } while($newsize == $get && $tries <= $maxtries);
 	    fclose($file);
 
 	    $data = pretty($data);
     
 	    echo $newsize . ";" . $data;
-	}
-	else {
-	    die("COULD NOT aquire shared lock.");
-	}
     }
     else {
 	die("ERRAR. Could not open $datafile for reading.");
