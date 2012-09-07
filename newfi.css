@@ -17,18 +17,18 @@ span.myself {
 }
 
 
-@media all and (max-width: 640px) {
+@media all and (max-width: 800px) {
     #say { width: 400px }
 }
 
-@media all and (max-width: 320px) {
-    #say { width: 80% }
+@media all and (max-width: 640px) {
+    #say { width: 90% }
 }
 
 
 div.saying {
-   text-indent: -8em;
-   margin-left: 8em;
+   text-indent: -3em;
+   margin-left: 3em;
 }
 
 img {
