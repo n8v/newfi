@@ -45,10 +45,14 @@ function pretty($string)
     $newstring = array();
     $newchars = 0;
     for($i = 0 ; $i < strlen($string) ; $i++) {
-	if ($string[$i] == "\x7f" || $string[$i] == "\x08") {
+	// ascii delete or backspace
+	if ($string[$i] == "\x7f" || $string[$i] == "\x08") { 
 	    $newchars--;
 	    $newstring[$newchars] = '';
-	} else $newstring[$newchars++] = $string[$i];
+	} 
+	else  {
+	    $newstring[$newchars++] = $string[$i];
+	}
     }
     //	$string = preg_replace('/.\x7f/','',$string);
     return implode('',$newstring);
@@ -59,6 +63,15 @@ $tries = 0;
 
 if (isset($_REQUEST['g'])) {
     $get = intval($_REQUEST['g']);
+
+    $skip_first_partial_line = false;
+    if ($get == 0) {
+	$stat = stat($datafile);
+	$get = max($stat['size'] - 4096, 0);
+	if ( $get > 0 ) {
+	    $skip_first_partial_line = true;
+	}
+    }
     
     $file = fopen($datafile,"r");
     if ($file) {
@@ -85,6 +98,10 @@ if (isset($_REQUEST['g'])) {
 	    fclose($file);
 
 	    $data = pretty($data);
+
+	    if ($skip_first_partial_line) {
+		$data= preg_replace('/^[^\n]+/s', '', $data);
+	    }
     
 	    echo $newsize . ";" . $data;
     }
