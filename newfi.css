@@ -28,7 +28,9 @@ span.myself {
 
 div.saying {
    text-indent: -3em;
-   margin-left: 3em;
+   padding-left: 3em;
+   overflow: hidden;
+   text-overflow: ellipsis;
 }
 
 img {
