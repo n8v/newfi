@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>newfi</title>
+<title>Sketti Butter &amp; Ketchup</title>
 <meta name="viewport" content="width=device-width">
 <link rel="stylesheet" href="./newfi.css" />
 <!-- 
@@ -190,6 +190,9 @@ function runme() {
   document.getElementById('nick').value = nick;
   myname = nick;
 
+  document.getElementById('saywut').value = '';
+  document.getElementById('saywut').focus();
+
   update();
 
 }
@@ -211,7 +214,7 @@ function go(e) {
 
 
 function say() {
-  var say = document.getElementById('say').value;
+  var say = document.getElementById('saywut').value;
   if (! say) {return false;}
 
   var nick = document.getElementById('nick').value;
@@ -264,8 +267,8 @@ function say() {
   xmlhttp.send(null);
 
   
-  document.getElementById('say').value = '';
-  document.getElementById('say').focus();
+  document.getElementById('saywut').value = '';
+  document.getElementById('saywut').focus();
 
   return;
 
@@ -274,14 +277,17 @@ function say() {
 </script>
 <!-- script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script -->
 </head>
-<body onload="runme()">
+<body onload="runme()">"say()">
 <div id=pop></div>
 <hr>
 <pre id=pre></pre>
 <div style="width:100%">
+<!-- form id="sayf" onsubmit="go(0); return false;" -->
 <input type=text id=nick value="noob" onkeypress="go(event)" onblur="" >
 
-<input type=text id=say size=100 onkeypress="go(event)" onblur="say()" >
+<input type=text id=saywut size=100 onkeypress="go(event)" onblur="say()" >
+<!--<textarea id=say name=say width=100 height=1 onkeypress="go(event)" onblur="say()"></textarea>-->
 <input type=submit onclick="go(0); return false;">
+</form>
 </div>
 </body>
