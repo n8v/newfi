@@ -18,11 +18,11 @@ span.myself {
 
 
 @media all and (max-width: 800px) {
-    #say { width: 400px }
+    #saywut { width: 400px }
 }
 
 @media all and (max-width: 640px) {
-    #say { width: 90% }
+    #saywut { width: 90% }
 }
 
 
