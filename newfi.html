@@ -283,11 +283,13 @@ function say() {
 <pre id=pre></pre>
 <div style="width:100%">
 <!-- form id="sayf" onsubmit="go(0); return false;" -->
-<input type=text id=nick value="noob" onkeypress="go(event)" onblur="" >
+<input type=text id=nick value="noob" onkeypress="go(event)" onblur="">
 
-<input type=text id=saywut size=100 onkeypress="go(event)" onblur="say()" >
+<input type=text id=saywut size=100 onkeypress="go(event)" onblur="say()">
 <!--<textarea id=say name=say width=100 height=1 onkeypress="go(event)" onblur="say()"></textarea>-->
-<input type=submit onclick="go(0); return false;">
+<br>
+<input type=submit onclick="go(0); return false;" value="Say">
 </form>
+<button onclick="document.location.reload(true)">Reboot</a>
 </div>
 </body>
