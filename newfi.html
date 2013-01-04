@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Sketti Butter &amp; Ketchup</title>
+<title>You don't meet the minimum requirements to have an opinion.</title>
 <meta name="viewport" content="width=device-width">
 <link rel="stylesheet" href="./newfi.css" />
 <!-- 
 
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
+<script src="http://www.zachstronaut.com/projects/winternetizer/winternetizer-combined-min.js" type="text/javascript"></script>
 -->
 
 <script type="text/javascript">
@@ -14,6 +17,7 @@
 var last = 0;
 var myname = 'noob';
 var global_notificatable = false;
+var moar=0;
 
 // Let's write our own jQuery!
 function getXMLRequest() {
@@ -210,11 +214,28 @@ function go(e) {
   }
 
   say();
+  return false;
+}
+
+function setSelectionRange(input, selectionStart, selectionEnd) {
+  if (input.setSelectionRange) {
+    input.focus();
+    input.setSelectionRange(selectionStart, selectionEnd);
+  }
+  else if (input.createTextRange) {
+    var range = input.createTextRange();
+    range.collapse(true);
+    range.moveEnd('character', selectionEnd);
+    range.moveStart('character', selectionStart);
+    range.select();
+  }
 }
 
 
 function say() {
-  var say = document.getElementById('saywut').value;
+  var say;
+  if (moar) say = document.getElementById('saymoar').value;
+  else say = document.getElementById('saywut').value;
   if (! say) {return false;}
 
   var nick = document.getElementById('nick').value;
@@ -224,6 +245,7 @@ function say() {
 
   myname = nick;
 
+  say = say.replace(/\r\n|\n|\r/g, "<br />");
     // emacs syntax is sad :<
   var txt = encodeURIComponent(nick + "> " + say);
 
@@ -268,10 +290,26 @@ function say() {
 
   
   document.getElementById('saywut').value = '';
-  document.getElementById('saywut').focus();
+  document.getElementById('saymoar').value = '';
+  if (moar) document.getElementById('saymoar').focus();
+  else document.getElementById('saywut').focus();
 
   return;
 
+}
+
+function swatch()
+{
+   moar = 1 - moar;
+   if (moar == 0) {
+      document.getElementById('swatch').innerHTML = "moar";
+      document.getElementById('saywut').style.display = "inline";
+      document.getElementById('saymoar').style.display = "none";
+   } else {
+      document.getElementById('swatch').innerHTML = "less";
+      document.getElementById('saywut').style.display = "none";
+      document.getElementById('saymoar').style.display = "inline";
+   }
 }
 
 </script>
@@ -285,11 +323,21 @@ function say() {
 <!-- form id="sayf" onsubmit="go(0); return false;" -->
 <input type=text id=nick value="noob" onkeypress="go(event)" onblur="">
 
+
 <input type=text id=saywut size=100 onkeypress="go(event)" onblur="say()">
-<!--<textarea id=say name=say width=100 height=1 onkeypress="go(event)" onblur="say()"></textarea>-->
+
+
+<!--
+<textarea id=say name=say width=100 height=1 onkeypress="go(event)" onblur="say()"></textarea>
+-->
+
+
+<textarea id=saymoar name=saymoar style="display: none;"></textarea>
+<a id=swatch onclick="swatch();">moar</a>
+
 <br>
-<input type=submit onclick="go(0); return false;" value="Say">
+<input type=submit onclick="say(); return false;" value="Say">
 </form>
-<button onclick="document.location.reload(true)">Reboot</a>
+<button onclick="document.location.reload(true)">iPhone Button #2</a>
 </div>
 </body>

@@ -55,6 +55,7 @@ function pretty($string)
 	}
     }
     //	$string = preg_replace('/.\x7f/','',$string);
+    //  $string = preg_replace('/\n/','<br>',$string);
     return implode('',$newstring);
 }
 
@@ -67,7 +68,7 @@ if (isset($_REQUEST['g'])) {
     $skip_first_partial_line = false;
     if ($get == 0) {
 	$stat = stat($datafile);
-	$get = max($stat['size'] - 4096, 0);
+	$get = max($stat['size'] - 8192, 0);
 	if ( $get > 0 ) {
 	    $skip_first_partial_line = true;
 	}
