@@ -167,8 +167,7 @@ function update() {
 	     need_scroll = true;
 	   }
          }
-
-	 if (need_scroll) {
+	 if (need_scroll && !document.getElementById('scrolllock').checked ) {
            // scroll to bottom
            window.scrollTo(0, document.body.scrollHeight);
 	 }
@@ -279,7 +278,7 @@ function say() {
          }
 
 	 // scroll to bottom
-	 window.scrollTo(0, document.body.scrollHeight);
+         if ( !document.getElementById('scrolllock').checked ) window.scrollTo(0, document.body.scrollHeight);
 
 
       }
@@ -338,5 +337,6 @@ function swatch()
 </form>
 <button onclick="document.location.reload(true)">iPhone Button #2</button>
 <button  id=swatch onclick="swatch();">moar</button>
+<input type=checkbox id=scrolllock name=scrolllock>SCROLL LOCK
 </div>
 </body>
