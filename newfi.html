@@ -255,7 +255,6 @@ function say() {
     return;
   }
 
-  xmlhttp.open("GET","./newfi.php?s=" + txt + "&g" + last,true);
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.readyState == 4) {
       if (xmlhttp.status!=200) {
@@ -284,8 +283,9 @@ function say() {
       }
     }
   }
-  xmlhttp.setRequestHeader('Accept','text/html');
-  xmlhttp.send(null);
+  xmlhttp.open("POST","./newfi.php",true);
+  xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xmlhttp.send("s=" + txt);			
 
   
   document.getElementById('saywut').value = '';
