@@ -217,10 +217,10 @@ function go(e) {
   if (e && e.which) {
     e = e;
     if (e.which != 13) return;
-  } else {
-    e = event;
-    if (e.keyCode != 13) return;
-  }
+  } // else {
+  //   e = event;
+  //   if (e.keyCode != 13) return;
+  // }
 
   say();
   return false;
