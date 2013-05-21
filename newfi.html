@@ -248,7 +248,7 @@ function say() {
     if (! saying) {return false;}
 
     var nick = document.getElementById('nick').value;
-    document.cookie = "nick=" + nick + "; expires= Tue Jan 19, 2038 03:14:07 UTC; path=/";
+    document.cookie = "nick=" + nick + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; max-age=" + Infinity;
 
     var spanclass = nick == myname ? 'myself' : '';
 
@@ -267,8 +267,6 @@ function say() {
 
     xmlhttp.onerror = function() {
 	sayFailHandler(saying, nick, xmlhttp);
-	// console.error('z0mgwtfbbq POSTing "' + saying + '" failed');
-	//   setTimeout(say, 1000);
         return false;
     }
 
