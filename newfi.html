@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>You don't meet the minimum requirements to have an opinion.</title>
+<title>Newfi. Now with retries.</title>
 <meta name="viewport" content="width=device-width">
 <link rel="stylesheet" href="./newfi.css" />
 <!-- 
-
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
 <script src="http://www.zachstronaut.com/projects/winternetizer/winternetizer-combined-min.js" type="text/javascript"></script>
@@ -22,36 +21,36 @@ var moar=0;
 // Let's write our own jQuery!
 function getXMLRequest() {
 
-var xmlhttp=false;
-/*@cc_on @*/
-/*@if (@_jscript_version >= 5)
-// JScript gives us Conditional compilation, we can cope with old IE versions.
-// and security blocked creation of the objects.
-  try {
+    var xmlhttp=false;
+    /*@cc_on @*/
+    /*@if (@_jscript_version >= 5)
+    // JScript gives us Conditional compilation, we can cope with old IE versions.
+    // and security blocked creation of the objects.
+    try {
     xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-  } catch (e) {
+    } catch (e) {
     try {
-      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
     } catch (E) {
-       xmlhttp = false;
+    xmlhttp = false;
     }
-  }
-  @end @*/
-  if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-    try {
-      xmlhttp = new XMLHttpRequest();
-    } catch (e) {
-      xmlhttp=false;
     }
-  }
-  if (!xmlhttp && window.createRequest) {
-    try {
-      xmlhttp = window.createRequest();
-    } catch (e) {
-      xmlhttp=false;
+    @end @*/
+    if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+	try {
+	    xmlhttp = new XMLHttpRequest();
+	} catch (e) {
+	    xmlhttp=false;
+	}
     }
-  }
-  return xmlhttp;
+    if (!xmlhttp && window.createRequest) {
+	try {
+	    xmlhttp = window.createRequest();
+	} catch (e) {
+	    xmlhttp=false;
+	}
+    }
+    return xmlhttp;
 }
 
 
@@ -128,8 +127,11 @@ function add_line(txt)
 }
 
 function update() {
+//      console.log("HERRO update()");
+
   var xmlhttp = getXMLRequest();
   if (!xmlhttp) {
+ //     console.warn("No xmlhttp wut");
     setTimeout(update, 1000);
     return;
   }
@@ -142,7 +144,7 @@ function update() {
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.readyState == 4) {
       if (xmlhttp.status!=200) {
-        change_name("FAIL!");
+//        change_name("FAIL!");
         setTimeout(update, 1000);
         return false;
       }
@@ -201,6 +203,14 @@ function runme() {
 }
 
 
+function change_name(newname) {
+
+  document.getElementById('nick').value = newname;
+  myname = newname;
+
+}
+
+
 function go(e) {
   valid=0;
   check_notificatable();
@@ -232,70 +242,94 @@ function setSelectionRange(input, selectionStart, selectionEnd) {
 
 
 function say() {
-  var say;
-  if (moar) say = document.getElementById('saymoar').value;
-  else say = document.getElementById('saywut').value;
-  if (! say) {return false;}
+    var saying;
+    if (moar) saying = document.getElementById('saymoar').value;
+    else saying = document.getElementById('saywut').value;
+    if (! saying) {return false;}
 
-  var nick = document.getElementById('nick').value;
-  document.cookie = "nick=" + nick + "; expires= Tue Jan 19, 2038 03:14:07 UTC; path=/";
+    var nick = document.getElementById('nick').value;
+    document.cookie = "nick=" + nick + "; expires= Tue Jan 19, 2038 03:14:07 UTC; path=/";
 
-  var spanclass = nick == myname ? 'myself' : '';
+    var spanclass = nick == myname ? 'myself' : '';
 
-  myname = nick;
+    myname = nick;
 
-  say = say.replace(/\r\n|\n|\r/g, "<br />");
+    saying = saying.replace(/\r\n|\n|\r/g, "<br />");
     // emacs syntax is sad :<
-  var txt = encodeURIComponent(nick + "> " + say);
+    var txt = encodeURIComponent(nick + "> " + saying);
 
-//               encodeURIComponent(say);
+    //               encodeURIComponent(saying);
 
-  var xmlhttp = getXMLRequest();
-  if (!xmlhttp) {
-    return;
-  }
-
-  xmlhttp.onreadystatechange = function() {
-    if (xmlhttp.readyState == 4) {
-      if (xmlhttp.status!=200) {
-        change_name("FAIL!");
-        return false;
-      }
-	
-
-      var ret = xmlhttp.responseText;
-
-      var semi = ret.indexOf(';');
-      if (semi > 0) {
-         last = 1 * ret.substring(0,semi);
-	 var saystr = ret.substring(semi + 1); 
-	 var sayings = new Array();
-	 sayings = saystr.split('\n');
-
-	 for ( var i in sayings) {
-	   if (sayings[i].length > 0) add_line(sayings[i]);
-         }
-
-	 // scroll to bottom
-         if ( !document.getElementById('scrolllock').checked ) window.scrollTo(0, document.body.scrollHeight);
-
-
-      }
+    var xmlhttp = getXMLRequest();
+    if (!xmlhttp) {
+	return;
     }
-  }
-  xmlhttp.open("POST","./newfi.php",true);
-  xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  xmlhttp.send("s=" + txt);			
 
-  
-  document.getElementById('saywut').value = '';
-  document.getElementById('saymoar').value = '';
-  if (moar) document.getElementById('saymoar').focus();
-  else document.getElementById('saywut').focus();
+    xmlhttp.onerror = function() {
+	sayFailHandler(saying, nick, xmlhttp);
+	// console.error('z0mgwtfbbq POSTing "' + saying + '" failed');
+	//   setTimeout(say, 1000);
+        return false;
+    }
 
-  return;
+    xmlhttp.onreadystatechange = function() {
+	if (xmlhttp.readyState == 4) {
+	    if (xmlhttp.status!=200) {
+		sayFailHandler(saying, nick, xmlhttp);
+		return false;
+	    }
+	    
+
+	    var ret = xmlhttp.responseText;
+
+	    var semi = ret.indexOf(';');
+	    if (semi > 0) {
+		last = 1 * ret.substring(0,semi);
+		var saystr = ret.substring(semi + 1); 
+		var sayings = new Array();
+		sayings = saystr.split('\n');
+
+		for ( var i in sayings) {
+		    if (sayings[i].length > 0) add_line(sayings[i]);
+		}
+
+		// scroll to bottom
+		if ( !document.getElementById('scrolllock').checked ) window.scrollTo(0, document.body.scrollHeight);
+
+
+	    }
+	}
+    }
+    xmlhttp.open("POST","./newfi.php",true);
+    xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xmlhttp.send("s=" + txt);			
+
+    
+    document.getElementById('saywut').value = '';
+    document.getElementById('saymoar').value = '';
+    if (moar) document.getElementById('saymoar').focus();
+    else document.getElementById('saywut').focus();
+
+    return;
 
 }
+
+function sayFailHandler(failedsaying, nick, xmlhttp) {
+    var retry_seconds = 5;
+    // console.error('z0mgwtfbbq POSTing "' + failedsaying + '" failed');
+    add_line('<strong>ERRRORRR</strong>: newfi> <em style="color:#666">Posting your last saying "' + failedsaying + 
+	     '" failed. Retrying in ' + retry_seconds + 's.</em>');
+
+    setTimeout(function() {
+	var txt = encodeURIComponent(nick + "> " + failedsaying);
+	// console.log("RePOSTing failed saying.");
+	xmlhttp.open("POST","./newfi.php",true);
+	xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	xmlhttp.send("s=" + txt);
+    }, 1000 * retry_seconds);
+
+}
+
 
 function swatch()
 {
