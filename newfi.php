@@ -1,11 +1,11 @@
 <?php
 
 /* For simulating DreamHost crappiness */
-if (rand(1,100) > 33 && isset($_REQUEST['s'])) {
-    sleep( 2 );
-    header($_SERVER['SERVER_PROTOCOL'] . ' 504 Internal Server Error', true, 504);
-    exit;
-}
+/* if (rand(1,100) > 33 && isset($_REQUEST['s'])) { */
+/*     sleep( 2 ); */
+/*     header($_SERVER['SERVER_PROTOCOL'] . ' 504 Internal Server Error', true, 504); */
+/*     exit; */
+/* } */
 
 date_default_timezone_set('America/Anchorage');
 
