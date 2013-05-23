@@ -14,7 +14,9 @@ header('Content-type: text/html');
 //$datafile = dirname($_SERVER{'SCRIPT_FILENAME'}) . '/newfi';
 $datafile = './newfi';
 
-$maxtries = 9;
+$max_post_seconds = 10;
+$retry_microseconds = 1000;
+$maxtries = $max_post_seconds * 1000 * 1000 / $retry_microseconds;
 $tries = 0;
 
 if (isset($_REQUEST['s'])) {
@@ -27,7 +29,7 @@ if (isset($_REQUEST['s'])) {
    do {
        $file = @fopen($datafile,"a");
        //   fseek($file,0,SEEK_END);
-       if (!$file) usleep(1000); // microseconds
+       if (!$file) usleep($retry_microseconds); 
 
    }
    while (!$file && $tries <= $maxtries);
@@ -68,7 +70,10 @@ function pretty($string)
     return implode('',$newstring);
 }
 
-$maxtries = 900; // about 90 seconds
+
+$max_poll_seconds = 50;
+$retry_microseconds = 100000;
+$maxtries = $max_poll_seconds * 1000000 / $retry_microseconds;
 $tries = 0;
 
 if (isset($_REQUEST['g'])) {
@@ -95,14 +100,14 @@ if (isset($_REQUEST['g'])) {
 
 		fseek($file,$get,0);
 		//      stream_select($read,$write,$except,1);
-		$data = fread($file,1000000);
+		$data = fread($file,$retry_microseconds);
 		$newsize = ftell($file);
 		flock($file, LOCK_UN);
         }
 	else {
 	    die("COULD NOT aquire shared lock.");
 	}
-	if ($newsize == $get) usleep(100000);
+	if ($newsize == $get) usleep($retry_microseconds);
 	$tries++;
       } while($newsize == $get && $tries <= $maxtries);
 	    fclose($file);
