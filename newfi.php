@@ -1,11 +1,13 @@
 <?php
 
 /* For simulating DreamHost crappiness */
-/* if (rand(1,100) > 33 ) { // && isset($_REQUEST['s'])) { */
-/*     sleep( 2 ); */
-/*     header($_SERVER['SERVER_PROTOCOL'] . ' 504 Internal Server Error', true, 504); */
-/*     exit; */
-/* } */
+/*
+if (rand(1,100) > 33 ) { // && isset($_REQUEST['s'])) { 
+    sleep( 2 ); 
+    header($_SERVER['SERVER_PROTOCOL'] . " 504 Ain't nobody got time for that.", true, 504); 
+    exit; 
+} 
+*/
 
 date_default_timezone_set('America/Anchorage');
 
@@ -70,8 +72,20 @@ function pretty($string)
     return implode('',$newstring);
 }
 
+/*
 
-$max_poll_seconds = 50;
+ However, the timeout value has to be chosen carefully; indeed,
+   problems can occur if this value is set too high (e.g., the client
+   might receive a 408 Request Timeout answer from the server or a 504
+   Gateway Timeout answer from a proxy).  The default timeout value in a
+   browser is 300 seconds, but most network infrastructures include
+   proxies and servers whose timeout is not that long.
+
+    -- http://tools.ietf.org/html/draft-loreto-http-bidirectional-07#section-5.5
+
+*/
+
+$max_poll_seconds = 30;
 $retry_microseconds = 100000;
 $maxtries = $max_poll_seconds * 1000000 / $retry_microseconds;
 $tries = 0;
