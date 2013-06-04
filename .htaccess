@@ -1,0 +1,9 @@
+SetEnvIf Request_URI "newfi\.php" no-gzip dont-vary
+
+#ModPagespeedAllow "*/newfi.php?g=0"
+ModPagespeedDisallow "*/newfi.php*"
+
+# this turns off all the gzip
+#SetEnv no-gzip dont-vary
+
+

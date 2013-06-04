@@ -41,6 +41,7 @@ if (isset($_REQUEST['s'])) {
 	   fwrite($file,$say,strlen($say));
 	   flock($file, LOCK_UN);
 	   fclose($file);	   
+	   exit;
        }
        else {
 	       die( "COULD NOT FLOCK $datafile");
@@ -50,7 +51,6 @@ if (isset($_REQUEST['s'])) {
        echo "COULD NOT OPEN $datafile FOR APPENDING after $tries tries!";
        exit;
    }
-       
 }
 
 function pretty($string)
@@ -87,7 +87,7 @@ function pretty($string)
 
 $max_poll_seconds = 30;
 $retry_microseconds = 100000;
-$maxtries = $max_poll_seconds * 1000000 / $retry_microseconds;
+$maxtries = $max_poll_seconds * (1000000 / $retry_microseconds);
 $tries = 0;
 
 if (isset($_REQUEST['g'])) {
@@ -110,11 +110,9 @@ if (isset($_REQUEST['g'])) {
 		//      $write = NULL;
 		//      $except = NULL;
 	if (flock($file, LOCK_SH)) {
-
-
 		fseek($file,$get,0);
 		//      stream_select($read,$write,$except,1);
-		$data = fread($file,$retry_microseconds);
+		$data = fread($file,8192);
 		$newsize = ftell($file);
 		flock($file, LOCK_UN);
         }
@@ -124,15 +122,20 @@ if (isset($_REQUEST['g'])) {
 	if ($newsize == $get) usleep($retry_microseconds);
 	$tries++;
       } while($newsize == $get && $tries <= $maxtries);
+
 	    fclose($file);
+
 
 	    $data = pretty($data);
 
 	    if ($skip_first_partial_line) {
 		$data= preg_replace('/^[^\n]+/s', '', $data);
 	    }
-    
+
+#$data .= "<!-- newsize=$newsize; get=$get after $tries tries -->\n";    
+
 	    echo $newsize . ";" . $data;
+	    exit;
     }
     else {
 	die("ERRAR. Could not open $datafile for reading.");
