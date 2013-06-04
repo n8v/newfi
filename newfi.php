@@ -40,7 +40,7 @@ if (isset($_REQUEST['s'])) {
        if (flock($file, LOCK_EX)) {
 	   fwrite($file,$say,strlen($say));
 	   flock($file, LOCK_UN);
-	   fclose($file);	   
+	   fclose($file);
 	   exit;
        }
        else {
@@ -90,52 +90,53 @@ $retry_microseconds = 100000;
 $maxtries = $max_poll_seconds * (1000000 / $retry_microseconds);
 $tries = 0;
 
+$max_bytes_fistory = 8192;
+
 if (isset($_REQUEST['g'])) {
     $get = intval($_REQUEST['g']);
 
     $skip_first_partial_line = false;
     if ($get == 0) {
 	$stat = stat($datafile);
-	$get = max($stat['size'] - 8192, 0);
+	$get = max($stat['size'] - $max_bytes_fistory, 0);
 	if ( $get > 0 ) {
 	    $skip_first_partial_line = true;
 	}
     }
+
+
+    do {
+	usleep($retry_microseconds);
+
+	clearstatcache();
+	$stat = stat($datafile);
+	$seek_position = $stat['size'];
+
+    } while ($seek_position <= $get && $tries++ <= $maxtries) ;
     
     $file = fopen($datafile,"r");
-    if ($file) {
-	
-      do {
-		//      $read = array($file);
-		//      $write = NULL;
-		//      $except = NULL;
+    if ($file) {		
 	if (flock($file, LOCK_SH)) {
-		fseek($file,$get,0);
-		//      stream_select($read,$write,$except,1);
-		$data = fread($file,8192);
-		$newsize = ftell($file);
-		flock($file, LOCK_UN);
+	    fseek($file,$get,0);
+	    //      stream_select($read,$write,$except,1);
+	    $data = fread($file, $max_bytes_fistory);
+	    $seek_position = ftell($file);
+	    flock($file, LOCK_UN);
         }
 	else {
 	    die("COULD NOT aquire shared lock.");
 	}
-	if ($newsize == $get) usleep($retry_microseconds);
-	$tries++;
-      } while($newsize == $get && $tries <= $maxtries);
 
-	    fclose($file);
+	fclose($file);
 
+	$data = pretty($data);
 
-	    $data = pretty($data);
+	if ($skip_first_partial_line) {
+	    $data= preg_replace('/^[^\n]+/s', '', $data);
+	}
 
-	    if ($skip_first_partial_line) {
-		$data= preg_replace('/^[^\n]+/s', '', $data);
-	    }
-
-#$data .= "<!-- newsize=$newsize; get=$get after $tries tries -->\n";    
-
-	    echo $newsize . ";" . $data;
-	    exit;
+	echo $seek_position . ";" . $data;
+	exit;
     }
     else {
 	die("ERRAR. Could not open $datafile for reading.");
