@@ -8,6 +8,7 @@ if (rand(1,100) > 33 ) { // && isset($_REQUEST['s'])) {
     exit; 
 } 
 */
+$start_time = time();
 
 date_default_timezone_set('America/Anchorage');
 
@@ -112,7 +113,7 @@ if (isset($_REQUEST['g'])) {
 	$stat = stat($datafile);
 	$seek_position = $stat['size'];
 
-    } while ($seek_position <= $get && $tries++ <= $maxtries) ;
+    } while ($seek_position <= $get && $tries++ <= $maxtries &&  time() - $start_time < $max_poll_seconds - 1 ) ;
     
     $file = fopen($datafile,"r");
     if ($file) {		
