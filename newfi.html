@@ -123,6 +123,11 @@ function add_line(txt)
     
     tbl.appendChild(t);
 
+    var l;
+    if (l=document.getElementById('loading')) { 
+	l.remove(); 
+    }
+
 
 }
 
@@ -347,9 +352,8 @@ function swatch()
 <!-- script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script -->
 </head>
 <body onload="runme()">
-<div id=pop></div>
+<div id=pop><div id="loading"><div style="height:100em;"></div>Loading...</div></div>
 <hr>
-<pre id=pre></pre>
 <div style="width:100%">
 <!-- form id="sayf" onsubmit="go(0); return false;" -->
 <input type=text id=nick value="noob" onkeypress="go(event)" onblur="">
