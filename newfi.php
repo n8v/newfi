@@ -86,7 +86,7 @@ function pretty($string)
 
 */
 
-$max_poll_seconds = 30;
+$max_poll_seconds = 20;
 $retry_microseconds = 100000;
 $maxtries = $max_poll_seconds * (1000000 / $retry_microseconds);
 $tries = 0;
