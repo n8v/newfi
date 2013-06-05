@@ -125,7 +125,7 @@ function add_line(txt)
 
     var l;
     if (l=document.getElementById('loading')) { 
-	l.remove(); 
+	tbl.removeChild(l); 
     }
 
 
@@ -253,7 +253,7 @@ function say() {
     if (! saying) {return false;}
 
     var nick = document.getElementById('nick').value;
-    document.cookie = "nick=" + nick + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; max-age=" + Infinity;
+    document.cookie = "nick=" + nick + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
 
     var spanclass = nick == myname ? 'myself' : '';
 
