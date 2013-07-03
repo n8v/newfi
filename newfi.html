@@ -12,6 +12,8 @@
 
 <script type="text/javascript">
 
+//var canvas = document.getElementById("canvas");
+//var context = canvas.getContext('2d');
 
 var last = 0;
 var myname = 'noob';
@@ -204,7 +206,7 @@ function runme() {
   document.getElementById('saywut').focus();
 
   update();
-
+  preview();
 }
 
 
@@ -215,6 +217,19 @@ function change_name(newname) {
 
 }
 
+function preview() {
+  setTimeout(preview, 500);
+  
+
+  var p = document.getElementById('preview');
+  p.innerHTML = 'Preview Area';
+
+  if (document.getElementById('swatch').innerHTML == 'less') saying = document.getElementById('saymoar').value;
+  else saying = document.getElementById('saywut').value;
+  if (! saying) {return false;}
+
+  p.innerHTML = '<span class="blah">' + saying + '</span>';
+}
 
 function go(e) {
   valid=0;
@@ -354,12 +369,14 @@ function swatch()
 <body onload="runme()">
 <div id=pop><div id="loading"><div style="height:100em;"></div>Loading...</div></div>
 <hr>
+<div id=preview></div>
+<hr>
 <div style="width:100%">
 <!-- form id="sayf" onsubmit="go(0); return false;" -->
-<input type=text id=nick value="noob" onkeypress="go(event)" onblur="">
+<input type=text id=nick value="noob" onkeypress="go(event);" onblur="">
 
 
-<input type=text id=saywut size=100 onkeypress="go(event)" onblur="say()">
+<input type=text id=saywut size=100 onkeypress="go(event);" onblur="say()">
 
 
 <!--
