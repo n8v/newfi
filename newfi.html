@@ -36,6 +36,68 @@
 
 <script type="text/javascript">
 
+// Visibility API -- see
+// http://code.tutsplus.com/articles/html5-page-visibility-api--cms-22021
+
+
+// Get Browser-Specifc Prefix
+function getBrowserPrefix() {
+   
+  // Check for the unprefixed property.
+  if ('hidden' in document) {
+    return null;
+  }
+ 
+  // All the possible prefixes.
+  var browserPrefixes = ['moz', 'ms', 'o', 'webkit'];
+ 
+  for (var i = 0; i < browserPrefixes.length; i++) {
+    var prefix = browserPrefixes[i] + 'Hidden';
+    if (prefix in document) {
+      return browserPrefixes[i];
+    }
+  }
+ 
+  // The API is not supported in browser.
+  return null;
+}
+ 
+// Get Browser Specific Hidden Property
+function hiddenProperty(prefix) {
+  if (prefix) {
+    return prefix + 'Hidden';
+  } else {
+    return 'hidden';
+  }
+}
+ 
+// Get Browser Specific Visibility State
+function visibilityState(prefix) {
+  if (prefix) {
+    return prefix + 'VisibilityState';
+  } else {
+    return 'visibilityState';
+  }
+}
+ 
+// Get Browser Specific Event
+function visibilityEvent(prefix) {
+  if (prefix) {
+    return prefix + 'visibilitychange';
+  } else {
+    return 'visibilitychange';
+  }
+}
+
+// Get Browser Prefix
+var prefix = getBrowserPrefix();
+var hidden = hiddenProperty(prefix);
+var visibilityState = visibilityState(prefix);
+var visibilityEvent = visibilityEvent(prefix);
+
+var timescaling = 1; // for delaying polling when this tab isn't visible
+var unread = 0; // for tracking unread sayings in the favicon
+
 //var canvas = document.getElementById("canvas");
 //var context = canvas.getContext('2d');
 
@@ -182,7 +244,7 @@ function update() {
 	
 
       var ret = xmlhttp.responseText;
-	setTimeout(update, 1000);
+	setTimeout(update, 1000 * timescaling);
 
       var semi = ret.indexOf(';');
       if (semi > 0) {
@@ -200,6 +262,13 @@ function update() {
 	     need_scroll = true;
 	   }
          }
+
+	 if (document[hidden]) {
+	      unread += sayings.length - 1;
+	      favicon.badge(unread);
+              timescaling = 10;
+	 }
+
 	 if (need_scroll && !document.getElementById('scrolllock').checked ) {
            // scroll to bottom
            window.scrollTo(0, document.body.scrollHeight);
@@ -211,6 +280,17 @@ function update() {
   xmlhttp.setRequestHeader('Accept','text/html');
   xmlhttp.send(null);
 }
+
+// Visibility Change 
+    document.addEventListener(visibilityEvent, function(event) {
+          if (document[hidden]) {
+              timescaling = 10;
+          } else {
+              timescaling = 1;
+              unread=0;
+	      favicon.badge(unread);
+          }
+    });
 
 
 function runme() {
@@ -386,6 +466,10 @@ function swatch()
       document.getElementById('saymoar').style.display = "inline";
    }
 }
+
+
+
+
 
 </script>
 <!-- script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script -->
