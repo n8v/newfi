@@ -95,8 +95,9 @@ var hidden = hiddenProperty(prefix);
 var visibilityState = visibilityState(prefix);
 var visibilityEvent = visibilityEvent(prefix);
 
-var timescaling = 1; // for delaying polling when this tab isn't visible
+var timescaling = 1; // for delaying polling when this tab isn't visible or activity is light/slow
 var unread = 0; // for tracking unread sayings in the favicon
+var lastupdate = Date.now();
 
 //var canvas = document.getElementById("canvas");
 //var context = canvas.getContext('2d');
@@ -240,11 +241,17 @@ function update() {
 //        change_name("FAIL!");
         setTimeout(update, 1000);
         return false;
-      }
-	
+      }	
 
       var ret = xmlhttp.responseText;
-	setTimeout(update, 1000 * timescaling);
+      if (Date.now() - lastupdate > 10000) {
+          timescaling = Math.max(timescaling, 1);
+      }
+      if (Date.now() - lastupdate > 60000) {
+          timescaling = Math.min(timescaling * 6, 300);
+      }
+
+      setTimeout(update, 1000 * timescaling);
 
       var semi = ret.indexOf(';');
       if (semi > 0) {
@@ -259,6 +266,7 @@ function update() {
 
 	   if (sayings[i].length > 0) {
 	     add_line(sayings[i]);
+  	     lastupdate = Date.now();
 	     need_scroll = true;
 	   }
          }
@@ -266,7 +274,7 @@ function update() {
 	 if (document[hidden]) {
 	      unread += sayings.length - 1;
 	      favicon.badge(unread);
-              timescaling = 10;
+              timescaling = Math.max(timescaling, 10);
 	 }
 
 	 if (need_scroll && !document.getElementById('scrolllock').checked ) {
@@ -370,6 +378,9 @@ function say() {
     if (moar) saying = document.getElementById('saymoar').value;
     else saying = document.getElementById('saywut').value;
     if (! saying) {return false;}
+
+    timescaling = 0.3;
+    lastupdate = Date.now();
 
     var nick = document.getElementById('nick').value;
     document.cookie = "nick=" + nick + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
