@@ -34,10 +34,14 @@
 
 <link rel="stylesheet" href="./newfi.css" />
 
+<!-- Markdown via marked.js https://github.com/chjj/marked/ -->
+<script src="./marked.min.js" type="text/javascript"></script>
+
 <script type="text/javascript">
 
 // Visibility API -- see
 // http://code.tutsplus.com/articles/html5-page-visibility-api--cms-22021
+
 
 
 // Get Browser-Specifc Prefix
@@ -202,7 +206,7 @@ function add_line(txt)
     t.innerHTML = '<span class="ts">' + timestamp + 
 	': </span><span class="nick '+ nickclass +'">' + 
 	nick + '&gt; </span>' +
-	'<span class="blah">' + saying + '</span>';
+	'<span class="blah">' + marked(saying) + '</span>';
 
     if (nick != myname && saying && saying.length && saying.indexOf(myname) > -1) {
         notificator(nick, saying);
@@ -340,7 +344,7 @@ function preview() {
   else saying = document.getElementById('saywut').value;
   if (! saying) {return false;}
 
-  p.innerHTML = '<span class="blah">' + saying + '</span>';
+  p.innerHTML = '<span class="blah">' + marked(saying) + '</span>';
 }
 
 function go(e) {
@@ -528,8 +532,8 @@ $(document).ready(function() {
 </script>
 
 
-<!-- 
 
+<!--
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
 <script src="http://www.zachstronaut.com/projects/winternetizer/winternetizer-combined-min.js" type="text/javascript"></script>
 -->

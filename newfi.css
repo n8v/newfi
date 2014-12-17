@@ -33,6 +33,10 @@ div.saying {
    text-overflow: ellipsis;
 }
 
+div.saying p:first-of-type, span.blah p:first-of-type {
+   display: inline
+}
+
 img {
    max-width: 95%;
 }
