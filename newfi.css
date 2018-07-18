@@ -44,3 +44,7 @@ img {
 input {
     border: 1px solid #ccc;
 }
+
+big.emoji {
+  font-size: 2em;
+}

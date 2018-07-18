@@ -46,26 +46,26 @@
 
 // Get Browser-Specifc Prefix
 function getBrowserPrefix() {
-   
+
   // Check for the unprefixed property.
   if ('hidden' in document) {
     return null;
   }
- 
+
   // All the possible prefixes.
   var browserPrefixes = ['moz', 'ms', 'o', 'webkit'];
- 
+
   for (var i = 0; i < browserPrefixes.length; i++) {
     var prefix = browserPrefixes[i] + 'Hidden';
     if (prefix in document) {
       return browserPrefixes[i];
     }
   }
- 
+
   // The API is not supported in browser.
   return null;
 }
- 
+
 // Get Browser Specific Hidden Property
 function hiddenProperty(prefix) {
   if (prefix) {
@@ -74,7 +74,7 @@ function hiddenProperty(prefix) {
     return 'hidden';
   }
 }
- 
+
 // Get Browser Specific Visibility State
 function visibilityState(prefix) {
   if (prefix) {
@@ -83,7 +83,7 @@ function visibilityState(prefix) {
     return 'visibilityState';
   }
 }
- 
+
 // Get Browser Specific Event
 function visibilityEvent(prefix) {
   if (prefix) {
@@ -190,7 +190,7 @@ function add_line(txt)
         var b = txt.split(': ');
         if (b && b.length > 1) {
 	    timestamp = b.shift();
-	    
+
             var a = b.join(': ').split('> ');
         } else {
             var a = txt.split('> ');
@@ -201,27 +201,34 @@ function add_line(txt)
 
     var nickclass = nick == myname ? 'myself' : '';
 
-    var t = document.createElement('div');     
+    var t = document.createElement('div');
     t.className = 'saying';
-    t.innerHTML = '<span class="ts">' + timestamp + 
-	': </span><span class="nick '+ nickclass +'">' + 
+    t.innerHTML = '<span class="ts">' + timestamp +
+	': </span><span class="nick '+ nickclass +'">' +
 	nick + '&gt; </span>' +
-	'<span class="blah">' + marked(saying) + '</span>';
+	'<span class="blah">' + newfimarked(saying) + '</span>';
 
     if (nick != myname && saying && saying.length && saying.indexOf(myname) > -1) {
         notificator(nick, saying);
     }
-    
+
 //    var it = row.insertCell(0);
-    
+
     tbl.appendChild(t);
 
     var l;
-    if (l=document.getElementById('loading')) { 
-	tbl.removeChild(l); 
+    if (l=document.getElementById('loading')) {
+	tbl.removeChild(l);
     }
 
 
+}
+
+function newfimarked (s) {
+  s = marked(s)
+  // embiggen all emojis
+  s = s.replace(/[✀-�]+/g, '<big class="emoji">$&</big>')
+  return s
 }
 
 function update() {
@@ -245,7 +252,7 @@ function update() {
 //        change_name("FAIL!");
         setTimeout(update, 1000);
         return false;
-      }	
+      }
 
       var ret = xmlhttp.responseText;
       if (Date.now() - lastupdate > 10000) {
@@ -260,7 +267,7 @@ function update() {
       var semi = ret.indexOf(';');
       if (semi > 0) {
          last = 1 * ret.substring(0,semi);
-	 var saystr = ret.substring(semi + 1); 
+	 var saystr = ret.substring(semi + 1);
 	 var sayings = new Array();
 	 sayings = saystr.split('\n');
 
@@ -293,7 +300,7 @@ function update() {
   xmlhttp.send(null);
 }
 
-// Visibility Change 
+// Visibility Change
     document.addEventListener(visibilityEvent, function(event) {
           if (document[hidden]) {
               timescaling = 10;
@@ -314,7 +321,7 @@ function runme() {
     while (c.charAt(0)==' ') c = c.substring(1,c.length);
     if (c.indexOf('nick=') == 0) nick = c.substring(5,c.length);
   }
-  
+
   document.getElementById('nick').value = nick;
   myname = nick;
 
@@ -335,7 +342,7 @@ function change_name(newname) {
 
 function preview() {
   setTimeout(preview, 500);
-  
+
 
   var p = document.getElementById('preview');
   p.innerHTML = 'Preview Area';
@@ -344,7 +351,7 @@ function preview() {
   else saying = document.getElementById('saywut').value;
   if (! saying) {return false;}
 
-  p.innerHTML = '<span class="blah">' + marked(saying) + '</span>';
+  p.innerHTML = '<span class="blah">' + newfimarked(saying) + '</span>';
 }
 
 function go(e) {
@@ -415,14 +422,14 @@ function say() {
 		sayFailHandler(saying, nick, xmlhttp);
 		return false;
 	    }
-	    
+
 
 	    var ret = xmlhttp.responseText;
 
 	    var semi = ret.indexOf(';');
 	    if (semi > 0) {
 		last = 1 * ret.substring(0,semi);
-		var saystr = ret.substring(semi + 1); 
+		var saystr = ret.substring(semi + 1);
 		var sayings = new Array();
 		sayings = saystr.split('\n');
 
@@ -439,9 +446,9 @@ function say() {
     }
     xmlhttp.open("POST","./newfi.php",true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xmlhttp.send("s=" + txt);			
+    xmlhttp.send("s=" + txt);
 
-    
+
     document.getElementById('saywut').value = '';
     document.getElementById('saymoar').value = '';
     if (moar) document.getElementById('saymoar').focus();
@@ -454,7 +461,7 @@ function say() {
 function sayFailHandler(failedsaying, nick, xmlhttp) {
     var retry_seconds = 5;
     // console.error('z0mgwtfbbq POSTing "' + failedsaying + '" failed');
-    add_line('<strong>ERRRORRR</strong>: newfi> <em style="color:#666">Posting your last saying "' + failedsaying + 
+    add_line('<strong>ERRRORRR</strong>: newfi> <em style="color:#666">Posting your last saying "' + failedsaying +
 	     '" failed. Retrying in ' + retry_seconds + 's.</em>');
 
     setTimeout(function() {
