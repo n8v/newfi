@@ -227,7 +227,7 @@ function add_line(txt)
 function newfimarked (s) {
   s = marked(s)
   // embiggen all emojis
-  s = s.replace(/[✀-�]+/g, '<big class="emoji">$&</big>')
+  s = s.replace(/[\u2700-\udfff]+/g, '<big class="emoji">$&</big>')
   return s
 }
 
